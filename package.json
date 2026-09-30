@@ -1,0 +1,19 @@
+{
+  "name": "rk-raja-snap-bot",
+  "version": "1.0.0",
+  "description": "RK RAJA Snap Bot — fully offline local demo (line-by-line message simulation).",
+  "private": true,
+  "license": "MIT",
+  "author": "RK RAJA",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  },
+  "engines": {
+    "node": ">=16"
+  }
+}
