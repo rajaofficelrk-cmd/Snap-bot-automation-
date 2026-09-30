@@ -1,19 +1,91 @@
 {
   "name": "rk-raja-snap-bot",
-  "version": "1.0.0",
-  "description": "RK RAJA Snap Bot — fully offline local demo (line-by-line message simulation).",
+  "version": "1.2.0",
+  "description": "RK RAJA Snap Bot — fully offline local demo. Line-by-line message simulation with File Mode, prefix, here-name, interval control and live console. No Snapchat login, no network calls, no mass messaging.",
   "private": true,
   "license": "MIT",
-  "author": "RK RAJA",
+  "author": {
+    "name": "RK RAJA",
+    "url": "https://localhost"
+  },
+  "contributors": [
+    {
+      "name": "RK RAJA"
+    }
+  ],
+  "keywords": [
+    "rk-raja",
+    "snap-bot",
+    "snapchat",
+    "local-demo",
+    "offline",
+    "simulation",
+    "termux",
+    "android",
+    "file-mode",
+    "line-by-line"
+  ],
   "main": "server.js",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  },
+  "os": [
+    "linux",
+    "android",
+    "darwin",
+    "win32"
+  ],
+  "cpu": [
+    "x64",
+    "arm64",
+    "arm"
+  ],
   "scripts": {
     "start": "node server.js",
-    "dev": "node server.js"
+    "dev": "node server.js",
+    "serve": "node server.js",
+    "termux": "node server.js",
+    "clean": "rm -rf node_modules data/settings.json",
+    "reinstall": "npm run clean && npm install",
+    "test": "echo \"No tests — local demo only\" && exit 0",
+    "lint": "echo \"Lint skipped (no linter installed)\" && exit 0",
+    "info": "node -e \"console.log('RK RAJA Snap Bot v' + require('./package.json').version)\""
   },
   "dependencies": {
     "express": "^4.19.2"
   },
-  "engines": {
-    "node": ">=16"
+  "devDependencies": {},
+  "peerDependencies": {},
+  "optionalDependencies": {},
+  "bundledDependencies": false,
+  "config": {
+    "port": 3000,
+    "host": "0.0.0.0",
+    "dataDir": "data",
+    "publicDir": "public",
+    "maxFileSize": "2mb",
+    "defaultInterval": 1500,
+    "theme": "pink-white"
+  },
+  "browserslist": [
+    "last 3 Chrome versions",
+    "last 3 Firefox versions",
+    "last 3 Safari versions",
+    "last 2 Edge versions",
+    "Android >= 8",
+    "iOS >= 13"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://localhost/rk-raja-snap-bot.git"
+  },
+  "bugs": {
+    "url": "https://localhost/rk-raja-snap-bot/issues"
+  },
+  "homepage": "https://localhost/rk-raja-snap-bot#readme",
+  "publishConfig": {
+    "access": "private"
   }
 }
