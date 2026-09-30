@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RK RAJA Snap Bot — Local Demo</title>
+<style>
+  :root{
+    --pink:#ff2e88;
+    --pink-dark:#d81b60;
+    --pink-soft:#ffe3ef;
+    --pink-line:#ffd9e8;
+    --text:#2a1a22;
+    --muted:#8a5a70;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    padding:16px;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: radial-gradient(1100px 520px at 50% -220px, #ffe6f1 0%, #fff7fb 55%, #ffffff 100%);
+    color:var(--text);
+    min-height:100vh;
+    -webkit-text-size-adjust:100%;
+  }
+  .app{max-width:940px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+
+  /* ---------- Header ---------- */
+  .hdr{
+    display:flex;align-items:center;gap:12px;
+    background:linear-gradient(135deg,#ff2e88,#ff6fb0 60%,#ffa8cf);
+    color:#fff;padding:16px 18px;border-radius:18px;
+    box-shadow:0 10px 26px rgba(255,46,136,.28);
+  }
+  .logo{
+    width:48px;height:48px;border-radius:14px;background:rgba(255,255,255,.22);
+    display:grid;place-items:center;font-weight:800;font-size:17px;letter-spacing:.5px;
+    border:1px solid rgba(255,255,255,.55);flex:0 0 auto;
+  }
+  .hdr h1{margin:0;font-size:22px;letter-spacing:1.4px}
+  .sub{margin:3px 0 0;font-size:11.5px;opacity:.92;letter-spacing:.4px}
+  .badge{
+    margin-left:auto;font-size:9.5px;font-weight:800;letter-spacing:1.2px;
+    background:rgba(255,255,255,.92);color:var(--pink-dark);
+    padding:6px 10px;border-radius:999px;white-space:nowrap;
+  }
+
+  /* ---------- Notice ---------- */
+  .notice{
+    background:#fff0f6;border:1px dashed #ff9dc6;color:#a3145a;
+    padding:10px 14px;border-radius:12px;font-size:12.5px;line-height:1.55;
+  }
+
+  /* ---------- Cards ---------- */
+  .card{
+    background:#fff;border:1px solid var(--pink-line);border-radius:16px;
+    padding:14px 16px;box-shadow:0 4px 18px rgba(255,46,136,.06);
+  }
+  .card h2{
+    margin:0 0 12px;font-size:12px;text-transform:uppercase;
+    letter-spacing:1.3px;color:var(--pink-dark);
+  }
+
+  /* ---------- Form ---------- */
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:12px}
+  label{display:flex;flex-direction:column;gap:6px;font-size:11.5px;font-weight:700;color:var(--muted);letter-spacing:.3px}
+  input[type=text],input[type=number],input:not([type]),select{
+    width:100%;padding:10px 12px;border:1px solid #ffd0e2;border-radius:10px;
+    background:#fff8fb;font-size:14px;color:var(--text);outline:none;
+    font-family:inherit;font-weight:500;
+  }
+  input:focus,select:focus{
+    border-color:var(--pink);box-shadow:0 0 0 3px rgba(255,46,136,.15);background:#fff;
+  }
+  .inline{display:flex;gap:8px}
+  .inline input{flex:1;min-width:0}
+  .inline select{flex:0 0 84px;width:84px}
+
+  /* ---------- File row ---------- */
+  .file-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .filebtn{
+    display:inline-flex;align-items:center;gap:8px;
+    background:linear-gradient(135deg,#ff2e88,#ff6fb0);color:#fff;
+    padding:11px 18px;border-radius:12px;font-size:13px;font-weight:800;
+    cursor:pointer;letter-spacing:.4px;
+    box-shadow:0 6px 16px rgba(255,46,136,.25);
+    user-select:none;
+  }
+  .filebtn:active{transform:translateY(1px)}
+  .fname{font-size:12px;color:var(--muted);font-family:ui-monospace,Menlo,monospace;word-break:break-all}
+
+  /* ---------- Switch ---------- */
+  .switch-row{display:flex;align-items:center;gap:12px;margin-top:16px;font-size:13px;font-weight:700;color:var(--muted)}
+  .switch{position:relative;width:52px;height:28px;display:inline-block;flex:0 0 auto}
+  .switch input{opacity:0;width:0;height:0;position:absolute}
+  .slider{position:absolute;inset:0;background:#ffd0e2;border-radius:999px;transition:.2s;cursor:pointer}
+  .slider:before{
+    content:"";position:absolute;height:22px;width:22px;left:3px;top:3px;
+    background:#fff;border-radius:50%;transition:.2s;box-shadow:0 2px 6px rgba(0,0,0,.22);
+  }
+  .switch input:checked + .slider{background:var(--pink)}
+  .switch input:checked + .slider:before{transform:translateX(24px)}
+  .state{font-weight:800;font-size:11.5px;letter-spacing:1.2px;color:var(--pink)}
+
+  /* ---------- Progress ---------- */
+  .progress{display:flex;align-items:center;gap:12px;margin-top:16px}
+  .bar{flex:1;height:8px;background:var(--pink-soft);border-radius:999px;overflow:hidden}
+  .fill{height:100%;width:0;background:linear-gradient(90deg,#ff2e88,#ff8dc0);transition:width .15s linear}
+  #progress{
+    font-size:12px;font-weight:800;color:var(--pink-dark);
+    font-family:ui-monospace,Menlo,monospace;white-space:nowrap;
+  }
+
+  /* ---------- Buttons ---------- */
+  .actions{display:flex;gap:10px;flex-wrap:wrap}
+  .btn{
+    flex:1;min-width:128px;padding:13px 18px;border:none;border-radius:12px;
+    font-size:13.5px;font-weight:800;letter-spacing:.7px;cursor:pointer;
+    font-family:inherit;transition:transform .08s, opacity .2s;
+  }
+  .btn:active{transform:translateY(1px)}
+  .btn:disabled{opacity:.42;cursor:not-allowed}
+  .start{background:linear-gradient(135deg,#ff2e88,#ff6fb0);color:#fff;box-shadow:0 8px 20px rgba(255,46,136,.3)}
+  .stop{background:#fff;color:var(--pink-dark);border:2px solid var(--pink)}
+  .ghost{background:#fff0f6;color:#a3145a;border:1px solid #ffd0e2;flex:0 0 auto;min-width:auto}
+
+  /* ---------- Console ---------- */
+  .console-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:10px}
+  .console-head h2{margin:0}
+  .status{font-size:10.5px;font-weight:800;letter-spacing:1.2px;padding:5px 11px;border-radius:999px}
+  .status.idle{background:var(--pink-soft);color:#a3145a}
+  .status.run{background:var(--pink);color:#fff;animation:pulse 1.2s infinite}
+  .status.done{background:#12a150;color:#fff}
+  @keyframes pulse{50%{opacity:.55}}
+  .console{
+    height:290px;overflow-y:auto;background:#fff8fb;border:1px solid var(--pink-line);
+    border-radius:12px;padding:10px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    font-size:12.5px;line-height:1.65;
+  }
+  .log{display:flex;gap:8px;padding:2px 4px;border-bottom:1px dashed #ffe9f2;word-break:break-word}
+  .log:last-child{border-bottom:none}
+  .log .t{color:#c48ba6;flex:0 0 auto}
+  .log .m{flex:1;white-space:pre-wrap}
+  .log.info .m{color:#7a5c6a}
+  .log.msg  .m{color:#141014;font-weight:700}
+  .log.ok   .m{color:#0f8f47;font-weight:700}
+  .log.warn .m{color:#b26a00}
+  .log.err  .m{color:#c62828}
+
+  @media (max-width:480px){
+    body{padding:10px}
+    .hdr{padding:13px 14px}
+    .hdr h1{font-size:19px}
+    .badge{display:none}
+    .console{height:230px}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- HEADER -->
+  <header class="hdr">
+    <div class="logo">RK</div>
+    <div>
+      <h1>RK RAJA</h1>
+      <p class="sub">Snap Bot · Local Demo · v1.0</p>
+    </div>
+    <span class="badge">OFFLINE</span>
+  </header>
+
+  <div class="notice">
+    ⚠️ <b>Local demo only.</b> Ye app sirf aapke device par lines simulate karta hai —
+    koi Snapchat login, koi network request, koi OTP, koi message bhejna nahi.
+    UID / API fields sirf local demo configuration hain.
+  </div>
+
+  <!-- CONFIG -->
+  <section class="card">
+    <h2>Configuration</h2>
+    <div class="grid">
+      <label>USER UID
+        <input id="uid" placeholder="demo-user-uid" autocomplete="off" spellcheck="false">
+      </label>
+      <label>GROUP UID
+        <input id="guid" placeholder="demo-group-uid" autocomplete="off" spellcheck="false">
+      </label>
+      <label>SNAP PREFIX
+        <input id="prefix" placeholder="e.g. 🔥 RK" autocomplete="off">
+      </label>
+      <label>API (local demo only)
+        <input id="api" placeholder="demo-api-key" autocomplete="off" spellcheck="false">
+      </label>
+      <label>HERE NAME
+        <input id="here" placeholder="e.g. RK RAJA" autocomplete="off">
+      </label>
+      <label>INTERVAL
+        <span class="inline">
+          <input id="interval" type="number" min="1" step="1" value="1500">
+          <select id="unit">
+            <option value="ms">ms</option>
+            <option value="s">sec</option>
+          </select>
+        </span>
+      </label>
+    </div>
+  </section>
+
+  <!-- MESSAGE SOURCE -->
+  <section class="card">
+    <h2>Message Source</h2>
+    <div class="file-row">
+      <label class="filebtn">
+        📄 Select .txt File
+        <input id="file" type="file" accept=".txt,text/plain" hidden>
+      </label>
+      <span id="fileName" class="fname">No file selected</span>
+    </div>
+
+    <div class="switch-row">
+      <span>File Mode</span>
+      <label class="switch">
+        <input id="fileMode" type="checkbox" checked>
+        <span class="slider"></span>
+      </label>
+      <span id="fileModeState" class="state">ON</span>
+    </div>
+
+    <div class="progress">
+      <div class="bar"><div id="bar" class="fill"></div></div>
+      <span id="progress">Line 0 / 0</span>
+    </div>
+  </section>
+
+  <!-- ACTIONS -->
+  <section class="card actions">
+    <button id="start" class="btn start">▶ START</button>
+    <button id="stop" class="btn stop" disabled>■ STOP</button>
+    <button id="clear" class="btn ghost">Clear Log</button>
+    <button id="reset" class="btn ghost">Reset</button>
+  </section>
+
+  <!-- CONSOLE -->
+  <section class="card">
+    <div class="console-head">
+      <h2>Live Console</h2>
+      <span id="status" class="status idle">IDLE</span>
+    </div>
+    <div id="console" class="console"></div>
+  </section>
+
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var $ = function (id) { return document.getElementById(id); };
+  var KEY = "rk_raja_snap_bot_settings_v1";
+
+  var el = {
+    uid: $("uid"), guid: $("guid"), prefix: $("prefix"), api: $("api"),
+    here: $("here"), interval: $("interval"), unit: $("unit"),
+    file: $("file"), fileName: $("fileName"),
+    fileMode: $("fileMode"), fileModeState: $("fileModeState"),
+    progress: $("progress"), bar: $("bar"),
+    start: $("start"), stop: $("stop"), clear: $("clear"), reset: $("reset"),
+    console: $("console"), status: $("status")
+  };
+
+  var lines = [];        // file lines (empty lines removed)
+  var index = 0;         // next line to display
+  var timer = null;
+  var running = false;
+  var intervalMs = 1500;
+
+  /* ---------------- Console ---------------- */
+  function stamp() {
+    var d = new Date();
+    return d.toTimeString().slice(0, 8);
+  }
+
+  function log(type, text) {
+    var row = document.createElement("div");
+    row.className = "log " + type;
+
+    var t = document.createElement("span");
+    t.className = "t";
+    t.textContent = stamp();
+
+    var m = document.createElement("span");
+    m.className = "m";
+    m.textContent = text;
+
+    row.appendChild(t);
+    row.appendChild(m);
+    el.console.appendChild(row);
+    el.console.scrollTop = el.console.scrollHeight;
+
+    while (el.console.childElementCount > 600) {
+      el.console.removeChild(el.console.firstChild);
+    }
+  }
+
+  function setStatus(text, cls) {
+    el.status.textContent = text;
+    el.status.className = "status " + cls;
+  }
+
+  function updateProgress(cur, total) {
+    el.progress.textContent = "Line " + cur + " / " + total;
+    el.bar.style.width = total ? ((cur / total) * 100).toFixed(1) + "%" : "0%";
+  }
+
+  /* ---------------- Interval ---------------- */
+  function getIntervalMs() {
+    var v = parseFloat(el.interval.value);
+    if (!isFinite(v) || v <= 0) { v = 1500; }
+    var ms = (el.unit.value === "s") ? v * 1000 : v;
+    ms = Math.round(ms);
+    if (ms < 50) { ms = 50; }
+    if (ms > 3600000) { ms = 3600000; }
+    return ms;
+  }
+
+  /* ---------------- Message builder ----------------
+     Here Name  ->  "HereName: <line>"
+     Prefix     ->  "<prefix> <line>"
+     Both       ->  "<prefix> HereName: <line>"
+  -------------------------------------------------- */
+  function buildMessage(line) {
+    var msg = line;
+    var here = el.here.value.trim();
+    if (here) { msg = here + ": " + msg; }
+    var prefix = el.prefix.value.trim();
+    if (prefix) { msg = prefix + " " + msg; }
+    return msg;
+  }
+
+  /* ---------------- File Mode UI ---------------- */
+  function updateFileModeUI() {
+    var on = el.fileMode.checked;
+    el.fileModeState.textContent = on ? "ON" : "OFF";
+    el.fileModeState.style.color = on ? "#ff2e88" : "#b09aa4";
+  }
+
+  /* ---------------- Start / Stop ---------------- */
+  function start() {
+    if (running) { return; }
+
+    if (!el.fileMode.checked) {
+      log("warn", "File Mode OFF hai — pehle File Mode ON karein.");
+      setStatus("IDLE", "idle");
+      return;
+    }
+    if (!lines.length) {
+      log("warn", "Koi .txt file select nahi ki gayi (ya file khaali hai).");
+      setStatus("IDLE", "idle");
+      return;
+    }
+
+    intervalMs = getIntervalMs();
+    running = true;
+    index = 0;
+
+    el.start.disabled = true;
+    el.stop.disabled = false;
+    setStatus("RUNNING", "run");
+    saveSettings();
+
+    log("info", "▶ RK RAJA bot started — LOCAL SIMULATION (offline).");
+    log("info", "UID (demo): " + (el.uid.value.trim() || "(not set)") +
+               "  |  Group UID (demo): " + (el.guid.value.trim() || "(not set)"));
+    log("info", "Interval: " + intervalMs + " ms  |  Total lines: " + lines.length);
+
+    updateProgress(0, lines.length);
+    timer = setTimeout(tick, 250);
+  }
+
+  function tick() {
+    if (!running) { return; }
+
+    if (index >= lines.length) { finish(); return; }
+
+    var msg = buildMessage(lines[index]);
+    log("msg", "#" + (index + 1) + "/" + lines.length + "  " + msg);
+
+    index++;
+    updateProgress(index, lines.length);
+
+    if (index >= lines.length) { finish(); return; }
+
+    timer = setTimeout(tick, intervalMs);
+  }
+
+  function stop(finished) {
+    if (timer) { clearTimeout(timer); timer = null; }
+
+    var wasRunning = running;
+    running = false;
+
+    el.start.disabled = false;
+    el.stop.disabled = true;
+
+    if (finished) { return; }
+
+    if (wasRunning) {
+      log("warn", "■ Bot stopped by user at line " + index + " / " + lines.length + ".");
+    }
+    setStatus("IDLE", "idle");
+  }
+
+  function finish() {
+    stop(true);
+    setStatus("DONE", "done");
+    log("ok", "✔ Simulation complete — " + lines.length +
+              " lines processed. (Kuch bhi send nahi hua.)");
+  }
+
+  /* ---------------- File loading ---------------- */
+  el.file.addEventListener("change", function (e) {
+    var f = e.target.files && e.target.files[0];
+    if (!f) { return; }
+
+    if (!/\.txt$/i.test(f.name)) {
+      log("err", "Sirf .txt file allowed hai. Mili: " + f.name);
+      el.file.value = "";
+      return;
+    }
+
+    var reader = new FileReader();
+
+    reader.onload = function () {
+      var raw = String(reader.result || "");
+      lines = raw.split(/\r?\n/).filter(function (l) { return l.trim().length > 0; });
+
+      el.fileName.textContent = f.name + "  (" + lines.length + " lines)";
+      updateProgress(0, lines.length);
+
+      if (!lines.length) {
+        log("warn", "File khaali hai (ya sab lines blank hain): " + f.name);
+      } else {
+        log("ok", "File loaded: " + f.name + " — " + lines.length + " valid lines.");
+      }
+    };
+
+    reader.onerror = function () {
+      log("err", "File read nahi ho payi.");
+    };
+
+    reader.readAsText(f, "utf-8");
+  });
+
+  /* ---------------- Settings ---------------- */
+  function collect() {
+    return {
+      uid: el.uid.value,
+      guid: el.guid.value,
+      prefix: el.prefix.value,
+      api: el.api.value,
+      here: el.here.value,
+      interval: el.interval.value,
+      unit: el.unit.value,
+      fileMode: el.fileMode.checked
+    };
+  }
+
+  function apply(s) {
+    if (!s) { return; }
+    if (typeof s.uid === "string") { el.uid.value = s.uid; }
+    if (typeof s.guid === "string") { el.guid.value = s.guid; }
+    if (typeof s.prefix === "string") { el.prefix.value = s.prefix; }
+    if (typeof s.api === "string") { el.api.value = s.api; }
+    if (typeof s.here === "string") { el.here.value = s.here; }
+    if (s.interval !== undefined && s.interval !== "") { el.interval.value = s.interval; }
+    if (s.unit === "s" || s.unit === "ms") { el.unit.value = s.unit; }
+    if (typeof s.fileMode === "boolean") { el.fileMode.checked = s.fileMode; }
+    updateFileModeUI();
+  }
+
+  function saveSettings() {
+    var data = collect();
+    try { localStorage.setItem(KEY, JSON.stringify(data)); } catch (err) {}
+
+    try {
+      fetch("/api/settings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      }).catch(function () {});
+    } catch (err) {}
+  }
+
+  function loadSettings() {
+    var local = null;
+    try { local = JSON.parse(localStorage.getItem(KEY) || "null"); } catch (err) {}
+
+    try {
+      fetch("/api/settings")
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (server) {
+          var hasServer = server && Object.keys(server).length > 0;
+          apply(hasServer ? server : local);
+        })
+        .catch(function () { apply(local); });
+    } catch (err) {
+      apply(local);
+    }
+  }
+
+  /* ---------------- Wire-up ---------------- */
+  ["uid", "guid", "prefix", "api", "here", "interval"].forEach(function (k) {
+    el[k].addEventListener("change", saveSettings);
+    el[k].addEventListener("blur", saveSettings);
+  });
+  el.unit.addEventListener("change", saveSettings);
+  el.fileMode.addEventListener("change", function () {
+    updateFileModeUI();
+    saveSettings();
+  });
+
+  el.start.addEventListener("click", start);
+  el.stop.addEventListener("click", function () { stop(false); });
+
+  el.clear.addEventListener("click", function () {
+    el.console.innerHTML = "";
+    log("info", "Console cleared.");
+  });
+
+  el.reset.addEventListener("click", function () {
+    stop(false);
+    lines = [];
+    index = 0;
+    el.file.value = "";
+    el.fileName.textContent = "No file selected";
+    el.console.innerHTML = "";
+    updateProgress(0, 0);
+
+    el.uid.value = ""; el.guid.value = ""; el.prefix.value = "";
+    el.api.value = ""; el.here.value = "";
+    el.interval.value = "1500"; el.unit.value = "ms";
+    el.fileMode.checked = true;
+    updateFileModeUI();
+
+    setStatus("IDLE", "idle");
+    saveSettings();
+    welcome();
+  });
+
+  /* ---------------- Boot ---------------- */
+  function welcome() {
+    log("info", "RK RAJA Snap Bot — LOCAL OFFLINE DEMO");
+    log("info", "Koi Snapchat connection nahi. Koi network request nahi.");
+    log("info", "Steps: 1) .txt file select karein  2) Interval set karein  3) START dabayein.");
+  }
+
+  updateFileModeUI();
+  updateProgress(0, 0);
+  loadSettings();
+  welcome();
+})();
+</script>
+</body>
+</html>
